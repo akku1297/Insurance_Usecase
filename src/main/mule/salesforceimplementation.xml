@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a2a1cc69-51c5-43a3-83d4-6337208bef29" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="35676720-85f7-418b-8f30-97d7cd3a25ee" >
+		<salesforce:basic-connection username="aakansha.purohit@apisero.com" password="Apiseroap@876" securityToken="mjgizUtbA5x37CR7fah2GDg3" />
+	</salesforce:sfdc-config>
+	<flow name="getUserDetails" doc:id="13719221-111f-4326-9845-fbb6003e7e22" >
+		<salesforce:query doc:name="Query" doc:id="0363c479-fabe-4ea0-89d9-f130957edb8d" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[SELECT Name,Email,Account_Id__c,MobilePhone from Contact where Account_Id__c= ':accountId' limit 200]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	accountId : attributes.queryParams.accountId
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="d186ce54-1e54-4638-98d9-44ee2145c544" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[{
+"Account Id": payload[0].Account_Id__c,
+"name": payload[0].Name,
+"email": payload[0].Email,
+"Phone": payload[0].MobilePhone
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="addUser" doc:id="afd7df26-1d75-497b-986e-1be47b6bbdab" >
+		<ee:transform doc:name="Transform Message" doc:id="061d98d7-2a81-47b8-b24e-52e4216662cc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	
+	FirstName: payload.firstname,
+	LastName: payload.lastname,
+	Account_Id__c: payload.accountId,
+	MobilePhone: payload.phone,
+	Email: payload.email
+	
+	}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Contact" doc:id="d90c6a77-528a-496d-bf06-ad4442818674" config-ref="Salesforce_Config"/>
+		<choice doc:name="Choice" doc:id="a48b7f0a-a561-4812-8a0c-811286000785">
+			<when expression="#[payload.items.successful[0]==true]">
+				<ee:transform doc:name="Transform Message" doc:id="aac47c3b-d6d5-4c59-993f-c733a22ff49f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"message" : "User added successfully"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+				<otherwise>
+					<ee:transform doc:name="Transform Message" doc:id="04be8845-9249-4b51-accb-1fc6ffdb7d45">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"message": "User already exist"]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</otherwise>
+		</choice>
+	</flow>
+	<flow name="updateUser" doc:id="83d3fadb-f4dd-4ac3-846e-358d4b9dff26" >
+		<http:listener doc:name="Listener" doc:id="7a796d2a-f943-4d4b-8ac4-14004930278b" config-ref="HTTP_Listener_config" path="/update"/>
+		<salesforce:query doc:name="Query" doc:id="a96b265f-a740-491a-bacd-007e35234ce6" config-ref="Salesforce_Config" target="tempval">
+			<salesforce:salesforce-query ><![CDATA[select Id,Name,Email,Account_Id__c,MobilePhone from Contact where Account_Id__c= ':accountId' limit 200]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#["accountId": payload.accountId]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="b4ad222b-d3fa-41aa-a730-5d269bfa71cc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	
+	FirstName: payload.firstname,
+	LastName: payload.lastname,
+	Account_Id__c: payload.accountId,
+	MobilePhone: payload.phone,
+	Email: payload.email,
+	Id:vars.tempval.Id[0]
+	
+	}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:update doc:name="Update" doc:id="814b12c5-daae-46d5-b825-5cb64e575230" config-ref="Salesforce_Config" type="Contact"/>
+		<ee:transform doc:name="Transform Message" doc:id="47ce611d-0d1a-429a-b331-f69264e83428" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
