@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:system-a-pi-insurance="http://www.mulesoft.org/schema/mule/system-a-pi-insurance" xmlns:system-api-postgres="http://www.mulesoft.org/schema/mule/system-api-postgres"
+	xmlns:system-a-pi-salesforce="http://www.mulesoft.org/schema/mule/system-a-pi-salesforce"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/system-a-pi-salesforce http://www.mulesoft.org/schema/mule/system-a-pi-salesforce/current/mule-system-a-pi-salesforce.xsd
+http://www.mulesoft.org/schema/mule/system-api-postgres http://www.mulesoft.org/schema/mule/system-api-postgres/current/mule-system-api-postgres.xsd
+http://www.mulesoft.org/schema/mule/system-a-pi-insurance http://www.mulesoft.org/schema/mule/system-a-pi-insurance/current/mule-system-a-pi-insurance.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config1" doc:name="Salesforce Config" doc:id="e7fe5cc1-a2e9-48a9-827a-2c0a4a5c0a83" >
+		<salesforce:basic-connection username="${sales.username}" password="${sales.password}" securityToken="${sales.security_token}"/>
+	</salesforce:sfdc-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="8cdcd1d1-18b4-4e1d-b4fa-44094e2b4ef9" file="config.yaml" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="73e337ff-b8c7-4a67-8ab4-02e701529512" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
+</mule>

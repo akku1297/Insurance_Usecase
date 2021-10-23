@@ -35,7 +35,7 @@
 						<muleVersion>4.3.0</muleVersion>
 						<username>${username}</username>
 						<password>${password}</password>
-						<applicationName>assignment1-01</applicationName>
+						<applicationName>usecase-01</applicationName>
 						<environment>Sandbox</environment>
 						<objectStoreV2>true</objectStoreV2>
 						<region>us-east-2</region>
@@ -48,18 +48,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-http-connector</artifactId>
-			<version>1.5.25</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-sockets-connector</artifactId>
-			<version>1.2.1</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
 		<dependency>
 			<groupId>com.mulesoft.connectors</groupId>
 			<artifactId>mule-salesforce-connector</artifactId>
@@ -78,6 +66,36 @@
 			<version>1.0.4</version>
 			<classifier>raml</classifier>
 			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>054f94b9-f703-43ce-a240-88e278a0d47f</groupId>
+			<artifactId>mule-plugin-systemapi_salesforce</artifactId>
+			<version>1.0.4</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-sockets-connector</artifactId>
+			<version>1.1.5</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<version>1.5.23</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>054f94b9-f703-43ce-a240-88e278a0d47f</groupId>
+			<artifactId>mule-plugin-systemapi_postgres</artifactId>
+			<version>1.0.1</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>054f94b9-f703-43ce-a240-88e278a0d47f</groupId>
+			<artifactId>mule-plugin-systemapi_insurance</artifactId>
+			<version>1.0.0</version>
+			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
 
